@@ -26,12 +26,14 @@ for file in (Path(dataset_path) / "data").iterdir():
         train_len = len(df)
 
     for idx, row in tqdm(df.iterrows(), total=len(df), desc=split):
-        label = row["label"]
+        label = str(row["label"])
         img_bytes = row["image"]["bytes"]
         img = Image.open(io.BytesIO(img_bytes))
         img_name = f"{idx+train_len if split=='train' and train_idx==2 else idx}.jpg"
+        target = target_dir / label / img_name
 
-        img.save(target_dir / img_name)
-        list_file.write(f"{img_name} {label}\n")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        img.save(target_dir / label / img_name)
+        list_file.write(f"{label}/{img_name} {label}\n")
 
     list_file.close()
